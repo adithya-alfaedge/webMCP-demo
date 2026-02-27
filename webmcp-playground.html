@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WebMCP Playground — Learn by Doing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0a0e14;--surface:#0f1521;--card:#141c2b;--border:#1e2d40;--border2:#263548;
+  --accent:#3b9eff;--green:#3dffa0;--purple:#b57bff;--orange:#ff9f4a;--red:#ff5f5f;
+  --text:#d6e4f7;--text2:#7a9bbf;--text3:#3d5570;
+  --mono:'IBM Plex Mono',monospace;--sans:'Space Grotesk',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.5;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle at 20% 20%,rgba(59,158,255,.07) 0%,transparent 50%),radial-gradient(circle at 80% 80%,rgba(181,123,255,.06) 0%,transparent 50%);pointer-events:none;}
+.app{display:flex;flex-direction:column;min-height:100vh;}
+
+/* NAV */
+nav{display:flex;align-items:center;gap:12px;padding:14px 24px;background:rgba(15,21,33,.95);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);}
+.nav-logo{display:flex;align-items:center;gap:10px;}
+.nav-logo .icon{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-size:16px;}
+.nav-logo h1{font-size:16px;font-weight:700;letter-spacing:-.3px;}
+.nav-logo h1 span{color:var(--accent);}
+.nav-tags{display:flex;gap:8px;margin-left:4px;}
+.tag{font-family:var(--mono);font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;letter-spacing:.5px;text-transform:uppercase;}
+.tag-blue{background:rgba(59,158,255,.15);color:var(--accent);border:1px solid rgba(59,158,255,.3);}
+.tag-green{background:rgba(61,255,160,.12);color:var(--green);border:1px solid rgba(61,255,160,.25);}
+.tag-purple{background:rgba(181,123,255,.12);color:var(--purple);border:1px solid rgba(181,123,255,.25);}
+.tag-orange{background:rgba(255,159,74,.12);color:var(--orange);border:1px solid rgba(255,159,74,.25);}
+.nav-right{margin-left:auto;font-size:11px;color:var(--text3);}
+
+/* HERO */
+.hero{padding:20px 24px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;}
+.hero-left h2{font-size:20px;font-weight:700;letter-spacing:-.3px;margin-bottom:6px;}
+.hero-left h2 em{color:var(--accent);font-style:normal;}
+.hero-left p{color:var(--text2);font-size:13px;max-width:600px;}
+.concept-steps{display:flex;align-items:center;}
+.step{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--card);border:1px solid var(--border);font-size:12px;font-weight:600;color:var(--text2);}
+.step:first-child{border-radius:8px 0 0 8px;}
+.step:last-child{border-radius:0 8px 8px 0;}
+.step+.step{border-left:none;}
+.step .dot{width:8px;height:8px;border-radius:50%;}
+.step-1 .dot{background:var(--text3);}
+.step-2 .dot{background:var(--accent);}
+.step-3 .dot{background:var(--green);}
+.arrow-sep{color:var(--text3);font-size:16px;padding:0 6px;}
+
+/* MAIN 3-COL */
+main{display:grid;grid-template-columns:1fr 360px 360px;flex:1;height:calc(100vh - 125px);}
+.col{border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.col:last-child{border-right:none;}
+.col-header{display:flex;align-items:center;gap:10px;padding:11px 16px;background:rgba(15,21,33,.8);border-bottom:1px solid var(--border);font-size:12px;font-weight:600;flex-shrink:0;}
+.col-icon{font-size:15px;}
+.col-sub{color:var(--text3);font-size:11px;font-weight:400;margin-left:auto;}
+.col-body{flex:1;overflow-y:auto;padding:16px;}
+.col-body::-webkit-scrollbar{width:4px;}
+.col-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+/* WEBAPP */
+.webapp-add{display:flex;gap:8px;margin-bottom:14px;}
+.webapp-add input{flex:1;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:var(--sans);font-size:13px;outline:none;transition:border-color .2s;}
+.webapp-add input:focus{border-color:var(--accent);}
+.webapp-add input::placeholder{color:var(--text3);}
+.webapp-add select{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:9px 10px;color:var(--text2);font-family:var(--sans);font-size:12px;outline:none;cursor:pointer;}
+.btn{padding:9px 14px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.btn:hover{border-color:var(--accent);color:var(--accent);}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:#000;}
+.btn-primary:hover{background:#60b5ff;border-color:#60b5ff;color:#000;}
+.btn-sm{padding:5px 10px;font-size:11px;}
+.filter-tabs{display:flex;gap:4px;margin-bottom:12px;}
+.filter-tab{padding:5px 11px;border-radius:6px;background:transparent;border:1px solid transparent;color:var(--text2);font-family:var(--sans);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;}
+.filter-tab:hover{color:var(--text);border-color:var(--border2);}
+.filter-tab.active{background:var(--card);border-color:var(--border2);color:var(--accent);}
+.task-list{display:flex;flex-direction:column;gap:7px;}
+.task-item{display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:11px 13px;transition:all .15s;position:relative;}
+.task-item:hover{border-color:var(--border2);}
+.task-item.done{opacity:.5;}
+.task-check{width:18px;height:18px;border-radius:50%;border:2px solid var(--border2);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .15s;background:transparent;}
+.task-check:hover{border-color:var(--green);}
+.task-item.done .task-check{background:var(--green);border-color:var(--green);color:#000;}
+.task-text{flex:1;font-size:13px;}
+.task-item.done .task-text{text-decoration:line-through;color:var(--text2);}
+.priority-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.p-high .priority-dot{background:var(--red);}
+.p-medium .priority-dot{background:var(--orange);}
+.p-low .priority-dot{background:var(--green);}
+.task-del{background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:13px;padding:2px 4px;opacity:0;transition:all .15s;}
+.task-item:hover .task-del{opacity:1;}
+.task-del:hover{color:var(--red);}
+.task-id{font-family:var(--mono);font-size:9px;color:var(--text3);flex-shrink:0;}
+.empty-state{text-align:center;padding:40px 20px;color:var(--text3);font-size:13px;}
+.stats-bar{display:flex;gap:0;margin-bottom:14px;background:var(--card);border-radius:8px;border:1px solid var(--border);overflow:hidden;}
+.stat{flex:1;text-align:center;padding:10px 8px;border-right:1px solid var(--border);}
+.stat:last-child{border-right:none;}
+.stat .val{font-size:22px;font-weight:700;font-family:var(--mono);color:var(--accent);}
+.stat .lbl{font-size:9px;color:var(--text3);font-weight:700;letter-spacing:.8px;text-transform:uppercase;}
+
+/* WebMCP PANEL */
+.webmcp-status{display:flex;align-items:center;gap:8px;padding:10px 13px;border-radius:8px;margin-bottom:14px;font-size:12px;font-weight:600;transition:all .3s;}
+.webmcp-status.active{background:rgba(61,255,160,.08);border:1px solid rgba(61,255,160,.25);color:var(--green);}
+.status-dot{width:7px;height:7px;border-radius:50%;animation:pulse 2s infinite;}
+.active .status-dot{background:var(--green);}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(.7);}}
+.section-label{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;margin-top:18px;}
+.section-label:first-of-type{margin-top:0;}
+.tool-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:11px;margin-bottom:7px;transition:all .2s;}
+.tool-card.calling{border-color:var(--accent);background:rgba(59,158,255,.06);box-shadow:0 0 12px rgba(59,158,255,.12);}
+.tool-name{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent);margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+.tool-call-badge{font-size:9px;padding:2px 6px;border-radius:3px;background:rgba(59,158,255,.2);color:var(--accent);animation:flash .5s infinite alternate;}
+@keyframes flash{from{opacity:.5;}to{opacity:1;}}
+.tool-desc{font-size:11px;color:var(--text2);margin-bottom:7px;line-height:1.5;}
+.tool-params{display:flex;flex-wrap:wrap;gap:4px;}
+.param-pill{font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:4px;background:rgba(255,159,74,.1);color:var(--orange);border:1px solid rgba(255,159,74,.2);}
+.param-pill.req::after{content:'*';color:var(--red);margin-left:2px;}
+.code-block{background:#070c13;border:1px solid var(--border);border-radius:8px;padding:13px;font-family:var(--mono);font-size:11px;line-height:1.8;overflow-x:auto;margin-bottom:10px;}
+.ck{color:var(--purple);}.cf{color:var(--accent);}.cs{color:var(--green);}.cc{color:var(--text3);}.co{color:var(--orange);}
+
+/* CHAT */
+.chat-area{display:flex;flex-direction:column;height:100%;overflow:hidden;padding:0;}
+.messages{flex:1;overflow-y:auto;padding:16px;}
+.messages::-webkit-scrollbar{width:4px;}
+.messages::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.msg{display:flex;gap:10px;margin-bottom:12px;align-items:flex-start;}
+.msg-avatar{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+.msg.user .msg-avatar{background:rgba(59,158,255,.2);color:var(--accent);}
+.msg.agent .msg-avatar{background:rgba(61,255,160,.15);color:var(--green);}
+.msg.tool .msg-avatar{background:rgba(255,159,74,.15);color:var(--orange);}
+.msg-content{flex:1;min-width:0;}
+.msg-role{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;}
+.msg.user .msg-role{color:var(--accent);}
+.msg.agent .msg-role{color:var(--green);}
+.msg.tool .msg-role{color:var(--orange);}
+.msg-body{background:var(--card);border:1px solid var(--border);border-radius:0 8px 8px 8px;padding:10px 12px;font-size:13px;line-height:1.6;word-break:break-word;}
+.msg.user .msg-body{border-radius:8px 0 8px 8px;border-color:rgba(59,158,255,.25);background:rgba(59,158,255,.05);}
+.msg.tool .msg-body{border-color:rgba(255,159,74,.2);background:rgba(255,159,74,.04);font-family:var(--mono);font-size:11px;}
+.tcb-label{font-size:9px;font-weight:700;letter-spacing:1px;color:var(--accent);text-transform:uppercase;margin-bottom:5px;}
+.tcb-fn{color:var(--accent);}
+.tcb-args{color:var(--orange);}
+.tcb-result{color:var(--green);margin-top:5px;border-top:1px solid rgba(61,255,160,.15);padding-top:5px;}
+.thinking{display:flex;gap:5px;align-items:center;padding:6px 0;}
+.thinking span{width:5px;height:5px;border-radius:50%;background:var(--text3);animation:bounce .8s ease infinite;}
+.thinking span:nth-child(2){animation-delay:.15s;}
+.thinking span:nth-child(3){animation-delay:.3s;}
+@keyframes bounce{0%,80%,100%{transform:translateY(0);}40%{transform:translateY(-5px);}}
+.chat-input-area{padding:12px 16px;border-top:1px solid var(--border);background:rgba(10,14,20,.9);flex-shrink:0;}
+.api-key-row{display:flex;gap:8px;margin-bottom:8px;}
+.api-key-row input{flex:1;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text2);font-family:var(--mono);font-size:11px;outline:none;transition:border-color .2s;}
+.api-key-row input:focus{border-color:var(--accent);}
+.api-note{font-size:10px;color:var(--text3);margin-bottom:7px;}
+.api-note a{color:var(--accent);text-decoration:none;}
+.quick-cmds{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;}
+.qcmd{font-size:10px;padding:4px 8px;border-radius:4px;background:var(--card);border:1px solid var(--border2);color:var(--text2);cursor:pointer;transition:all .15s;font-family:var(--mono);}
+.qcmd:hover{border-color:var(--accent);color:var(--accent);}
+.chat-row{display:flex;gap:8px;}
+.chat-input{flex:1;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-family:var(--sans);font-size:13px;outline:none;transition:border-color .2s;resize:none;height:42px;}
+.chat-input:focus{border-color:var(--accent);}
+.chat-input::placeholder{color:var(--text3);}
+.send-btn{width:42px;height:42px;border-radius:8px;flex-shrink:0;background:var(--accent);border:none;color:#000;font-size:16px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;}
+.send-btn:hover{background:#60b5ff;}
+.send-btn:disabled{background:var(--border2);cursor:not-allowed;color:var(--text3);}
+.notif{position:fixed;bottom:20px;right:20px;z-index:999;background:var(--card);border:1px solid var(--border2);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--green);box-shadow:0 4px 20px rgba(0,0,0,.5);animation:slideIn .3s ease;max-width:280px;}
+@keyframes slideIn{from{transform:translateX(20px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+*{scrollbar-width:thin;scrollbar-color:var(--border2) transparent;}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<script>
+// ══════════════════════════════════════════════════════════════
+// WebMCP POLYFILL — simulates navigator.modelContext
+// This is what Chrome 146 Canary implements natively (behind a flag)
+// ══════════════════════════════════════════════════════════════
+(function(){
+  const registry = new Map();
+  const listeners = [];
+  navigator.modelContext = {
+    _registry: registry,
+    _onChange(fn){ listeners.push(fn); },
+    provideContext(tools){
+      registry.clear();
+      tools.forEach(t => registry.set(t.name, t));
+      listeners.forEach(f=>f());
+    },
+    registerTool({name,description,inputSchema,handler}){
+      if(registry.has(name)) throw new Error(`Tool "${name}" already registered`);
+      registry.set(name,{name,description,inputSchema,handler});
+      listeners.forEach(f=>f());
+      console.log(`[WebMCP] ✅ registered: "${name}"`);
+    },
+    unregisterTool(name){
+      registry.delete(name);
+      listeners.forEach(f=>f());
+    },
+    clearContext(){ registry.clear(); listeners.forEach(f=>f()); },
+    listTools(){ return [...registry.values()].map(t=>({name:t.name,description:t.description,inputSchema:t.inputSchema})); },
+    async callTool(name,args){
+      const t = registry.get(name);
+      if(!t) throw new Error(`Tool "${name}" not found`);
+      return await t.handler(args);
+    }
+  };
+  console.log('[WebMCP Polyfill] navigator.modelContext is ready');
+})();
+
+// ══════════════════════════════════════════════════════════════
+// TASK MANAGER — existing web app logic (no changes needed)
+// ══════════════════════════════════════════════════════════════
+let tasks = [
+  {id:1,title:'Review project proposal',priority:'high',done:false},
+  {id:2,title:'Update documentation',priority:'medium',done:false},
+  {id:3,title:'Write unit tests',priority:'high',done:false},
+  {id:4,title:'Deploy to staging',priority:'medium',done:true},
+  {id:5,title:'Team meeting notes',priority:'low',done:true},
+];
+let nextId = 6;
+
+const db = {
+  add(title,priority='medium'){
+    const t={id:nextId++,title:title.trim(),priority,done:false};
+    tasks.push(t); return t;
+  },
+  list(filter='all'){
+    if(filter==='done')    return tasks.filter(t=>t.done);
+    if(filter==='pending') return tasks.filter(t=>!t.done);
+    return [...tasks];
+  },
+  complete(id){
+    const t=tasks.find(t=>t.id===+id);
+    if(!t) return null;
+    t.done=true; return t;
+  },
+  delete(id){
+    const i=tasks.findIndex(t=>t.id===+id);
+    if(i<0) return false;
+    tasks.splice(i,1); return true;
+  },
+  clearDone(){
+    const n=tasks.filter(t=>t.done).length;
+    tasks=tasks.filter(t=>!t.done); return n;
+  },
+  stats(){ return {total:tasks.length,done:tasks.filter(t=>t.done).length,pending:tasks.filter(t=>!t.done).length}; }
+};
+
+// ══════════════════════════════════════════════════════════════
+// WebMCP TOOLS — the ONLY new code you add to an existing app!
+// Wrap your existing functions and register them as tools.
+// ══════════════════════════════════════════════════════════════
+function registerTools(){
+
+  navigator.modelContext.registerTool({
+    name:'addTask',
+    description:'Add a new task to the task manager. Use when the user wants to create, schedule, or add a to-do item.',
+    inputSchema:{type:'object',properties:{title:{type:'string',description:'Task description'},priority:{type:'string',enum:['high','medium','low'],description:'Priority level, default medium'}},required:['title']},
+    handler:async({title,priority='medium'})=>{
+      const t=db.add(title,priority); renderApp();
+      return {success:true,task:t,message:`Task "${title}" added with ${priority} priority (id:${t.id})`};
+    }
+  });
+
+  navigator.modelContext.registerTool({
+    name:'listTasks',
+    description:'List and retrieve tasks. Filter by status. Use to show tasks, check pending work, or summarize progress.',
+    inputSchema:{type:'object',properties:{filter:{type:'string',enum:['all','pending','done'],description:'Filter: all/pending/done'}}},
+    handler:async({filter='all'})=>({tasks:db.list(filter),stats:db.stats(),count:db.list(filter).length})
+  });
+
+  navigator.modelContext.registerTool({
+    name:'completeTask',
+    description:'Mark a specific task as done/completed. Use when the user says they finished or completed a task.',
+    inputSchema:{type:'object',properties:{id:{type:'number',description:'Task ID to mark complete'}},required:['id']},
+    handler:async({id})=>{
+      const t=db.complete(id);
+      if(!t) return {success:false,message:`No task with id ${id}`};
+      renderApp();
+      return {success:true,task:t,message:`"${t.title}" marked complete`};
+    }
+  });
+
+  navigator.modelContext.registerTool({
+    name:'deleteTask',
+    description:'Delete or remove a specific task by its ID.',
+    inputSchema:{type:'object',properties:{id:{type:'number',description:'Task ID to delete'}},required:['id']},
+    handler:async({id})=>{
+      const ok=db.delete(id);
+      if(!ok) return {success:false,message:`No task with id ${id}`};
+      renderApp();
+      return {success:true,message:`Task #${id} deleted`};
+    }
+  });
+
+  navigator.modelContext.registerTool({
+    name:'clearCompleted',
+    description:'Remove all completed tasks at once. Use when the user wants to clean up finished tasks.',
+    inputSchema:{type:'object',properties:{}},
+    handler:async()=>{const n=db.clearDone();renderApp();return {success:true,removed:n,message:`Removed ${n} completed task(s)`};}
+  });
+
+  navigator.modelContext.registerTool({
+    name:'getStats',
+    description:'Get a summary of task counts — total, done, pending.',
+    inputSchema:{type:'object',properties:{}},
+    handler:async()=>({stats:db.stats()})
+  });
+}
+
+registerTools();
+
+// ══════════════════════════════════════════════════════════════
+// UI STATE
+// ══════════════════════════════════════════════════════════════
+let S = {
+  filter:'all', newTask:'', newPriority:'medium',
+  messages:[{role:'agent',content:`👋 I'm your AI agent. I can see **${navigator.modelContext.listTools().length} tools** registered on this page via **WebMCP**.\n\nPick a provider (Anthropic or OpenAI), enter your key, then try:\n• "Add a task to review the Q3 report, high priority"\n• "What are my pending tasks?"\n• "Mark task 3 as done"\n• "Clear all completed tasks"`}],
+  thinking:false, callingTool:null, apiKey:'', chatInput:'', provider:'anthropic'
+};
+
+// ══════════════════════════════════════════════════════════════
+// API ADAPTERS — translate between Anthropic ↔ OpenAI formats
+// ══════════════════════════════════════════════════════════════
+
+// Build provider-specific request body
+function buildRequest(provider, msgs, toolDefs, sys) {
+  if (provider === 'openai') {
+    return {
+      model: 'gpt-4o',
+      max_tokens: 1024,
+      messages: [{role:'system',content:sys}, ...msgs],
+      tools: toolDefs.map(t => ({
+        type: 'function',
+        function: { name:t.name, description:t.description, parameters:t.inputSchema||{type:'object',properties:{}} }
+      })),
+      tool_choice: 'auto'
+    };
+  }
+  // Anthropic
+  return { model:'claude-sonnet-4-20250514', max_tokens:1024, system:sys, tools:toolDefs, messages:msgs };
+}
+
+// Check if response wants tool calls
+function wantsTools(provider, data) {
+  if (provider === 'openai') return data.choices?.[0]?.finish_reason === 'tool_calls';
+  return data.stop_reason === 'tool_use';
+}
+
+// Extract text from response
+function extractText(provider, data) {
+  if (provider === 'openai') return data.choices?.[0]?.message?.content || '';
+  return (data.content||[]).filter(c=>c.type==='text').map(c=>c.text).join('\n');
+}
+
+// Extract tool calls from response
+function extractToolCalls(provider, data) {
+  if (provider === 'openai') {
+    return (data.choices?.[0]?.message?.tool_calls || []).map(tc => ({
+      id: tc.id, name: tc.function.name, args: JSON.parse(tc.function.arguments || '{}')
+    }));
+  }
+  return (data.content||[]).filter(c=>c.type==='tool_use').map(c => ({
+    id: c.id, name: c.name, args: c.input
+  }));
+}
+
+// Build assistant turn to append to history
+function buildAssistantTurn(provider, data) {
+  if (provider === 'openai') return { role:'assistant', content: data.choices[0].message.content, tool_calls: data.choices[0].message.tool_calls };
+  return { role:'assistant', content: data.content };
+}
+
+// Build tool result turn
+function buildToolResultTurn(provider, toolCalls, results) {
+  if (provider === 'openai') {
+    // OpenAI: one message per tool result, role:'tool'
+    return results.map((r,i) => ({ role:'tool', tool_call_id:toolCalls[i].id, content:JSON.stringify(r) }));
+  }
+  // Anthropic: single user message with array of tool_result blocks
+  return [{ role:'user', content: results.map((r,i)=>({type:'tool_result',tool_use_id:toolCalls[i].id,content:JSON.stringify(r)})) }];
+}
+
+async function callApi(body) {
+  const resp = await fetch('/api/messages', {
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':S.apiKey,'x-provider':S.provider},
+    body: JSON.stringify(body)
+  });
+  if (!resp.ok) { const e=await resp.json(); throw new Error(e.error?.message||e.error?.error?.message||`HTTP ${resp.status}`); }
+  return resp.json();
+}
+
+// ══════════════════════════════════════════════════════════════
+// AGENT — unified loop, works with both Anthropic and OpenAI
+// ══════════════════════════════════════════════════════════════
+async function runAgent(userMsg){
+  S.thinking=true; renderApp(); scrollChat();
+  const tools = navigator.modelContext.listTools();
+  const toolDefs = tools.map(t=>({name:t.name,description:t.description,inputSchema:t.inputSchema}));
+  const sys = 'You are a helpful AI agent in a Task Manager web app. Use the WebMCP tools available to manage tasks. Always use a tool when relevant. After tool calls, give a brief friendly response. Keep it concise.';
+  const p = S.provider;
+
+  // Build conversation history (exclude tool-display messages)
+  let msgs = S.messages.filter(m=>m.role!=='tool').map(m=>({role:m.role==='agent'?'assistant':'user',content:m.content}));
+  msgs.push({role:'user',content:userMsg});
+
+  try {
+    let data = await callApi(buildRequest(p, msgs, toolDefs, sys));
+
+    // Agentic loop — keep going while there are tool calls
+    while (wantsTools(p, data)) {
+      S.thinking = false;
+      const txt = extractText(p, data);
+      if (txt) S.messages.push({role:'agent', content:txt});
+
+      const tcs = extractToolCalls(p, data);
+      const results = [];
+
+      for (const tc of tcs) {
+        S.callingTool = tc.name; renderApp(); scrollChat();
+        S.messages.push({role:'tool', toolCall:{name:tc.name, args:tc.args}});
+        renderApp();
+        let result;
+        try { result = await navigator.modelContext.callTool(tc.name, tc.args); }
+        catch(e) { result = {error:e.message}; }
+        S.messages[S.messages.length-1].toolResult = result;
+        results.push(result);
+        renderApp(); await sleep(250);
+      }
+
+      // Append assistant + tool results to history and loop
+      msgs = [...msgs, buildAssistantTurn(p, data), ...buildToolResultTurn(p, tcs, results)];
+      S.callingTool = null; S.thinking = true; renderApp();
+      data = await callApi(buildRequest(p, msgs, toolDefs, sys));
+    }
+
+    S.thinking = false; S.callingTool = null;
+    const final = extractText(p, data);
+    if (final) S.messages.push({role:'agent', content:final});
+
+  } catch(e) {
+    S.thinking = false; S.callingTool = null;
+    S.messages.push({role:'agent', content:`⚠️ **Error:** ${e.message}\n\nCheck your API key and selected provider.`});
+  }
+  renderApp(); scrollChat();
+}
+
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+// ══════════════════════════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════════════════════════
+function renderApp(){
+  document.getElementById('app').innerHTML=buildHTML();
+  attachListeners();
+}
+
+function buildHTML(){
+  const tools=navigator.modelContext.listTools();
+  const stats=db.stats();
+  const filtered=db.list(S.filter);
+  return `
+<nav>
+  <div class="nav-logo">
+    <div class="icon">🤖</div>
+    <h1>Web<span>MCP</span> Playground</h1>
+  </div>
+  <div class="nav-tags">
+    <span class="tag tag-blue">W3C Draft</span>
+    <span class="tag tag-green">Polyfill Active</span>
+    <span class="tag tag-purple">Chrome 146 Preview</span>
+  </div>
+  <div class="nav-right">navigator.modelContext — ${tools.length} tools registered</div>
+</nav>
+<div class="hero">
+  <div class="hero-left">
+    <h2><em>Can you add WebMCP to an existing app?</em> — YES. Here's the proof.</h2>
+    <p>This Task Manager is an <strong>existing web app</strong>. We added <strong>6 WebMCP tools</strong> alongside the existing code — zero refactoring. The AI agent in column 3 discovers and calls them live.</p>
+  </div>
+  <div class="concept-steps">
+    <div class="step step-1"><div class="dot"></div>Existing App</div>
+    <div class="arrow-sep">＋</div>
+    <div class="step step-2"><div class="dot"></div>registerTool()</div>
+    <div class="arrow-sep">→</div>
+    <div class="step step-3"><div class="dot"></div>Agent-Ready</div>
+  </div>
+</div>
+<main>
+
+  <!-- COL 1: WEB APP -->
+  <div class="col">
+    <div class="col-header">
+      <span class="col-icon">📋</span>
+      <span>Task Manager</span>
+      <span class="tag tag-orange" style="margin-left:8px">Existing App</span>
+      <span class="col-sub">Your regular UI — untouched</span>
+    </div>
+    <div class="col-body">
+      <div class="stats-bar">
+        <div class="stat"><div class="val">${stats.total}</div><div class="lbl">Total</div></div>
+        <div class="stat"><div class="val" style="color:var(--orange)">${stats.pending}</div><div class="lbl">Pending</div></div>
+        <div class="stat"><div class="val" style="color:var(--green)">${stats.done}</div><div class="lbl">Done</div></div>
+      </div>
+      <div class="webapp-add">
+        <input id="ntask" type="text" placeholder="New task..." value="${esc(S.newTask)}">
+        <select id="npri">
+          <option value="high" ${S.newPriority==='high'?'selected':''}>🔴 High</option>
+          <option value="medium" ${S.newPriority==='medium'?'selected':''}>🟡 Med</option>
+          <option value="low" ${S.newPriority==='low'?'selected':''}>🟢 Low</option>
+        </select>
+        <button class="btn btn-primary" id="add-btn">Add</button>
+      </div>
+      <div class="filter-tabs">
+        <button class="filter-tab ${S.filter==='all'?'active':''}" data-filter="all">All (${stats.total})</button>
+        <button class="filter-tab ${S.filter==='pending'?'active':''}" data-filter="pending">Pending (${stats.pending})</button>
+        <button class="filter-tab ${S.filter==='done'?'active':''}" data-filter="done">Done (${stats.done})</button>
+        ${stats.done>0?`<button class="btn btn-sm" id="cleardone" style="margin-left:auto">Clear done</button>`:''}
+      </div>
+      <div class="task-list">
+        ${filtered.length===0?`<div class="empty-state">✨<br>No tasks here</div>`:
+          filtered.map(t=>`
+            <div class="task-item ${t.done?'done':''} p-${t.priority}">
+              <button class="task-check" data-complete="${t.id}">${t.done?'✓':''}</button>
+              <div class="task-text">${esc(t.title)}</div>
+              <div class="priority-dot"></div>
+              <span class="task-id">#${t.id}</span>
+              <button class="task-del" data-delete="${t.id}">✕</button>
+            </div>`).join('')}
+      </div>
+    </div>
+  </div>
+
+  <!-- COL 2: WebMCP -->
+  <div class="col">
+    <div class="col-header">
+      <span class="col-icon">🔧</span>
+      <span>WebMCP Layer</span>
+      <span class="tag tag-blue" style="margin-left:8px">navigator.modelContext</span>
+      <span class="col-sub">${tools.length} tools</span>
+    </div>
+    <div class="col-body">
+      <div class="webmcp-status active">
+        <div class="status-dot"></div>
+        Polyfill active — navigator.modelContext ready
+      </div>
+
+      <div class="section-label">Adding WebMCP to an existing app</div>
+      <div class="code-block"><span class="cc">// ✅ Your existing function — UNCHANGED</span>
+<span class="ck">function</span> <span class="cf">addTaskToUI</span>(title, priority) {
+  tasks.<span class="cf">push</span>({ title, priority, done: <span class="ck">false</span> });
+  <span class="cf">render</span>();
+}
+
+<span class="cc">// ➕ Just add this block alongside it</span>
+navigator.modelContext.<span class="cf">registerTool</span>({
+  name: <span class="cs">'addTask'</span>,
+  description: <span class="cs">'Add a new task...'</span>,
+  inputSchema: {
+    type: <span class="cs">'object'</span>,
+    properties: {
+      title:    { type: <span class="cs">'string'</span> },
+      priority: { type: <span class="cs">'string'</span> }
+    },
+    required: [<span class="cs">'title'</span>]
+  },
+  <span class="ck">handler</span>: <span class="ck">async</span>({ title, priority }) =&gt; {
+    <span class="cf">addTaskToUI</span>(title, priority); <span class="cc">// reuse existing!</span>
+    <span class="ck">return</span> { success: <span class="ck">true</span> };
+  }
+});</div>
+
+      <div class="section-label">Registered tools (${tools.length})</div>
+      ${tools.map(t=>`
+        <div class="tool-card ${S.callingTool===t.name?'calling':''}">
+          <div class="tool-name">
+            ⚙ ${t.name}
+            ${S.callingTool===t.name?'<span class="tool-call-badge">CALLING…</span>':''}
+          </div>
+          <div class="tool-desc">${esc(t.description.split('.')[0])}.</div>
+          <div class="tool-params">
+            ${Object.entries(t.inputSchema?.properties||{}).map(([k,v])=>{
+              const req=(t.inputSchema?.required||[]).includes(k);
+              return `<span class="param-pill${req?' req':''}">${k}:${v.type}</span>`;
+            }).join('')}
+          </div>
+        </div>`).join('')}
+
+      <div class="section-label" style="margin-top:22px">Full API surface</div>
+      <div class="code-block"><span class="cc">// Imperative API (JavaScript)</span>
+navigator.modelContext.<span class="cf">registerTool</span>({...})
+navigator.modelContext.<span class="cf">unregisterTool</span>(name)
+navigator.modelContext.<span class="cf">provideContext</span>(tools[]) <span class="cc">// bulk</span>
+navigator.modelContext.<span class="cf">clearContext</span>()
+
+<span class="cc">// Agent-side (browser calls these)</span>
+navigator.modelContext.<span class="cf">listTools</span>()
+navigator.modelContext.<span class="cf">callTool</span>(name, args)
+
+<span class="cc">// Declarative API (HTML forms)</span>
+&lt;form <span class="co">data-mcp-tool</span>=<span class="cs">"submitForm"</span>
+      <span class="co">data-mcp-description</span>=<span class="cs">"Submit support ticket"</span>&gt;
+  &lt;input name=<span class="cs">"subject"</span> /&gt;
+&lt;/form&gt;</div>
+    </div>
+  </div>
+
+  <!-- COL 3: AGENT CHAT -->
+  <div class="col">
+    <div class="col-header">
+      <span class="col-icon">🤖</span>
+      <span>AI Agent</span>
+      <span class="tag tag-green" style="margin-left:8px">${S.provider==="anthropic"?"Claude":"GPT-4o"}</span>
+      <span class="col-sub">Calls tools via modelContext</span>
+    </div>
+    <div class="chat-area">
+      <div class="messages" id="msgs">
+        ${S.messages.map(renderMsg).join('')}
+        ${S.thinking?`<div class="msg agent"><div class="msg-avatar">AI</div><div class="msg-content"><div class="msg-role">Agent</div><div class="msg-body"><div class="thinking"><span></span><span></span><span></span></div></div></div></div>`:''}
+      </div>
+      <div class="chat-input-area">
+        <div class="api-note" style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="color:var(--text3)">Provider:</span>
+          <button class="btn btn-sm ${S.provider==='anthropic'?'btn-primary':''}" id="prov-anthropic" style="padding:4px 10px">Anthropic</button>
+          <button class="btn btn-sm ${S.provider==='openai'?'btn-primary':''}" id="prov-openai" style="padding:4px 10px">OpenAI</button>
+          <span style="margin-left:4px;font-size:10px;color:var(--text3)">${S.provider==='anthropic'?'claude-sonnet-4':'gpt-4o'}</span>
+        </div>
+        <div class="api-key-row">
+          <input type="password" id="apikey" placeholder="${S.provider==='anthropic'?'sk-ant-api03-...':'sk-...'}" value="${S.apiKey}">
+          <button class="btn btn-sm" id="savekey">Save</button>
+        </div>
+        <div class="quick-cmds">
+          <span class="qcmd" data-cmd="What tasks do I have?">📋 List all</span>
+          <span class="qcmd" data-cmd="Add a high priority task: fix the login bug">➕ Add task</span>
+          <span class="qcmd" data-cmd="Mark task 1 as done">✅ Complete #1</span>
+          <span class="qcmd" data-cmd="Delete task 2">🗑 Delete #2</span>
+          <span class="qcmd" data-cmd="Clear all completed tasks">🧹 Clear done</span>
+          <span class="qcmd" data-cmd="Give me a quick stats summary">📊 Stats</span>
+        </div>
+        <div class="chat-row">
+          <textarea class="chat-input" id="chatinput" placeholder="Tell the agent what to do with your tasks…" rows="1">${esc(S.chatInput)}</textarea>
+          <button class="send-btn" id="sendbtn" ${S.thinking?'disabled':''}>➤</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>`;
+}
+
+function renderMsg(m){
+  if(m.role==='tool'){
+    return `<div class="msg tool">
+      <div class="msg-avatar">⚙</div>
+      <div class="msg-content">
+        <div class="msg-role">Tool Call</div>
+        <div class="msg-body">
+          <div class="tcb-label">→ navigator.modelContext.callTool()</div>
+          <div><span class="tcb-fn">${m.toolCall.name}</span>(<span class="tcb-args">${esc(JSON.stringify(m.toolCall.args))}</span>)</div>
+          ${m.toolResult?`<div class="tcb-result">← ${esc(JSON.stringify(m.toolResult).slice(0,140))}${JSON.stringify(m.toolResult).length>140?'…':''}</div>`:''}
+        </div>
+      </div>
+    </div>`;
+  }
+  const av=m.role==='user'?'You':'AI';
+  const rl=m.role==='user'?'You':'Agent';
+  const html=m.content
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/`(.*?)`/g,`<code style="font-family:var(--mono);font-size:11px;color:var(--accent)">$1</code>`)
+    .replace(/\n/g,'<br>');
+  return `<div class="msg ${m.role}">
+    <div class="msg-avatar">${av}</div>
+    <div class="msg-content">
+      <div class="msg-role">${rl}</div>
+      <div class="msg-body">${html}</div>
+    </div>
+  </div>`;
+}
+
+function esc(s){if(typeof s!=='string')return '';return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function scrollChat(){requestAnimationFrame(()=>{const m=document.getElementById('msgs');if(m)m.scrollTop=m.scrollHeight;});}
+function notif(t){const e=document.createElement('div');e.className='notif';e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),2500);}
+
+function attachListeners(){
+  document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{S.filter=b.dataset.filter;renderApp();}));
+  const ni=document.getElementById('ntask');
+  const ps=document.getElementById('npri');
+  if(ni){ni.addEventListener('input',e=>S.newTask=e.target.value);ni.addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('add-btn')?.click();});}
+  if(ps) ps.addEventListener('change',e=>S.newPriority=e.target.value);
+  document.getElementById('add-btn')?.addEventListener('click',()=>{if(!S.newTask.trim())return;db.add(S.newTask,S.newPriority);S.newTask='';renderApp();});
+  document.getElementById('cleardone')?.addEventListener('click',()=>{db.clearDone();renderApp();});
+  document.querySelectorAll('[data-complete]').forEach(b=>b.addEventListener('click',()=>{db.complete(+b.dataset.complete);renderApp();}));
+  document.querySelectorAll('[data-delete]').forEach(b=>b.addEventListener('click',()=>{db.delete(+b.dataset.delete);renderApp();}));
+  const ak=document.getElementById('apikey');
+  if(ak) ak.addEventListener('input',e=>S.apiKey=e.target.value);
+  document.getElementById('savekey')?.addEventListener('click',()=>notif('✅ API key saved'));
+  document.getElementById('prov-anthropic')?.addEventListener('click',()=>{S.provider='anthropic';S.apiKey='';renderApp();});
+  document.getElementById('prov-openai')?.addEventListener('click',()=>{S.provider='openai';S.apiKey='';renderApp();});
+  const ci=document.getElementById('chatinput');
+  if(ci){
+    ci.addEventListener('input',e=>{S.chatInput=e.target.value;e.target.style.height='auto';e.target.style.height=Math.min(e.target.scrollHeight,100)+'px';});
+    ci.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();document.getElementById('sendbtn')?.click();}});
+  }
+  document.getElementById('sendbtn')?.addEventListener('click',async()=>{
+    const msg=S.chatInput.trim();
+    if(!msg||S.thinking) return;
+    if(!S.apiKey){notif('⚠️ Enter your API key first');return;}
+    S.messages.push({role:'user',content:msg});
+    S.chatInput='';
+    renderApp(); scrollChat();
+    await runAgent(msg);
+  });
+  document.querySelectorAll('.qcmd').forEach(b=>b.addEventListener('click',()=>{
+    if(S.thinking) return;
+    S.chatInput=b.dataset.cmd;
+    renderApp();
+    setTimeout(()=>document.getElementById('sendbtn')?.click(),80);
+  }));
+}
+
+navigator.modelContext._onChange(()=>renderApp());
+renderApp();
+scrollChat();
+</script>
+</body>
+</html>
